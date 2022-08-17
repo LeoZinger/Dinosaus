@@ -29,3 +29,18 @@ c = [("John", 31) ,("Bob", 10), ("Tim", 4), ("Mark", 12)]
 c.sort(key=lambda x:x[1])
 print("c=", c)
 
+myDict = {}
+myList = [1, 2, 3, 4, 5]
+
+for i in range(0, len(myList)):
+    myDict[i] = myList[i]
+
+# myDict = dict(zip([x for x in mylist]))
+print("List converted to Dict = ", myDict)
+newDict = {v: [v] for v in myDict}
+print("newDict = ", newDict)
+
+inf = float('-inf')
+print(inf)
+
+queue = []
