@@ -8,6 +8,23 @@ class TreeNode:
 
 
 class Solution:
+    def __init__(self):
+        self.maxWidth = 0
+
+    def findMaxPathSum(self, node: TreeNode) -> int:
+        def dfs(node: TreeNode, pathSum: int, level: int) -> int:
+            if not node:
+                return pathSum
+            val_level = node.val
+            for i in range(level):
+                val_level = val_level * 10
+            max_left = dfs(node.left, pathSum + val_level, level + 1)
+            max_right = dfs(node.right, pathSum + val_level, level + 1)
+            print("max_left = ", max_left)
+            print("max_right = ", max_right)
+            return max(max_left, max_right)
+        return dfs(node, 0, 0)
+
     def findTreeHeight(self, node: TreeNode) -> int:
         if not node:
             return 0
@@ -27,53 +44,18 @@ class Solution:
                 if curr_node.right:
                     queue.append(curr_node.right)
 
-    def widthOfBinaryTree(self, root: TreeNode) -> int:
-        if not root:
-            return 0
-        # height = self.findTreeHeight(root)
-        # current_height = 1
-        curr_q = [root]
-        next_q = []
-        max_width = 0
-        while curr_q:
-            for i in range(len(curr_q)):
-                curr_node = curr_q[i]
-                if curr_node.left:
-                    # print("curr_node.left val : ", curr_node.left.val)
-                    next_q.append(curr_node.left)
-                if curr_node.right:
-                    # print("curr_node.left val : ", curr_node.right.val)
-                    next_q.append(curr_node.right)
-            # print("curr_q list type : ", type(curr_q))
-            # print("next_q list type : ", type(next_q))
-            for i in range(len(next_q)):
-                next_node = next_q[i]
-                print("next_q[", i, "] : ", next_node.val)
-            curr_width = 0
-            width_start = False
-            for curr_node in curr_q:
-                if (curr_node.left or curr_node.right) == next_q[0] \
-                        and not width_start:
-                    width_start = True
-                    curr_width += 1
-                if curr_node.left != next_q[len(next_q)-1] and curr_node.right != next_q[len(next_q)-1] \
-                        and width_start:
-                    curr_width += 2
-                if (curr_node.left == next_q[len(next_q)-1] or curr_node.right == next_q[len(next_q)-1]) \
-                        and width_start:
-                    curr_width += 1
-                    break
-            max_width = max(max_width, curr_width)
+    def bfs(self, root):
+        q = [(root, 0)]
+        while q:
+            size = len(q)
+            self.maxWidth = max(self.maxWidth, q[-1][1] - q[0][1] + 1)
 
-            curr_q.clear()
-            curr_q = next_q
-            next_q.clear()
-        return max_width
-
-        def findTreeHeight(node: TreeNode) -> int:
-            if not node:
-                return 0
-            return max(findTreeHeight(node.left) + 1, findTreeHeight(node.right) + 1)
+            for i in range(size):
+                node, pos = q.pop(0)
+                if node.left:
+                    q.append((node.left, 2 * pos + 1))
+                if node.right:
+                    q.append((node.right, 2 * pos + 2))
 
 
 root = TreeNode(4)
@@ -86,5 +68,7 @@ root.right.right = TreeNode(7)
 
 solution = Solution()
 # print("Height of tree = ", solution.findTreeHeight(root))
-solution.bfsTraverse(root)
-print("Max Width Of BinaryTree = ", solution.widthOfBinaryTree(root))
+solution.bfs(root)
+print("Max Width Of BinaryTree = ", solution.maxWidth)
+print("Max PathSum - root leftmost number - Of BinaryTree = ", solution.findMaxPathSum(root))
+
